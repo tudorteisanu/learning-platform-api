@@ -1,0 +1,55 @@
+# .NET SDK
+.vs/
+.vscode/
+.idea/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+[Dd]ebug/
+[Dd]ebug-netcoreapp3.1/
+[Dd]ebug-netstandard2.0/
+[Dd]ebug-netcoreapp2.2/
+bin/
+obj/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer Files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# JetBrains Rider
+.idea/
+
+# User-specific files from Rider
+.idea/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# VS Code directory
+.vscode/
+
+# ASP.NET and Node.js
+npm-debug.log
+yarn-error.log

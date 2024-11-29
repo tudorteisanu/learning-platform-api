@@ -1,0 +1,6 @@
+@learning_platform_HostAddress = http://localhost:8082
+
+GET {{learning_platform_HostAddress}}
+Accept: application/json
+
+###
