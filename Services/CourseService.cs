@@ -31,7 +31,10 @@ public class CourseService : ICourseService
         }
 
          public async Task<Course?> GetCourseByIdAsync(Guid courseId) {
-            return await _context.Courses.FindAsync(courseId);
+            return await _context.Courses
+                .Include(c => c.Lessons)
+                .Where(c => c.Id == courseId)
+                .SingleOrDefaultAsync();
          }
 
         public async Task<bool> CreateCourseAsync(Course course)
@@ -45,7 +48,7 @@ public class CourseService : ICourseService
         {
             return await _context.Lessons
                 .Where(l => l.CourseId == courseId)
-                .Where(l => l.Content.Count() > 0)
+                // .Where(l => l.Content.Count() > 0)
                 .ToListAsync();
         }
 

@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
 
         if (string.IsNullOrEmpty(token))
         {
-            return Unauthorized("Invalid credentials.");
+            return Unauthorized(new{ Message ="Invalid credentials." });
         }
 
         return Ok(new { Token = token });
@@ -40,10 +40,10 @@ public class AuthController : ControllerBase
 
         if (!success)
         {
-            return BadRequest("Registration failed.");
+            return BadRequest(new { Message = "Registration failed." });
         }
 
-        return Ok("Registration successful.");
+        return Ok(new { Message = "Registration successful." });
     }
 }
 

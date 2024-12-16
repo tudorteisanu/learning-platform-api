@@ -1,6 +1,7 @@
 using AutoMapper;
 using LearningPlatform.Models;
 using LearningPlatform.DTO;
+using LearningPlatform.Data;
 
 public class MappingProfile : Profile
 {
@@ -13,20 +14,23 @@ public class MappingProfile : Profile
         CreateMap<RegisterDTO, User>();
         CreateMap<LessonDTO, Lesson>();
         CreateMap<CourseDTO, Course>();
+        CreateMap<Course, CourseResponseDTO>();
         CreateMap<CoursePatchDto, Course>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-        CreateMap<PatchLessonDTO, Lesson>()
+        CreateMap<LessonPatchDTO, Lesson>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<QuestionDTO, Question>();
         CreateMap<QuestionPatchDTO, Question>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         
-        CreateMap<OptionDTO, Option>();
-        CreateMap<OptionPatchDTO, Option>()
+        CreateMap<AnswerDTO, Answer>();
+        CreateMap<AnswerPatchDTO, Answer>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<LessonContentDTO, LessonContent>();
-        CreateMap<LessonContentPatchDTO, LessonContent>()
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));;
-        
+        CreateMap<Lesson, LessonResponseDTO>();
+        CreateMap<LessonContentPatchDTO, Lesson>();
+        CreateMap<Lesson, LessonListResponseDTO>();
+        CreateMap<Question, QuestionResponseDTO>()
+            .ForMember(dest => dest.UserAnswer, opt => opt.MapFrom<UserAnswerResolver>());         
     }
 }

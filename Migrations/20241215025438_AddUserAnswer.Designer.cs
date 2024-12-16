@@ -3,6 +3,7 @@ using System;
 using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace learning_platform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241215025438_AddUserAnswer")]
+    partial class AddUserAnswer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace learning_platform.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("AnswerQuestion", b =>
-                {
-                    b.Property<Guid>("AnswersId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("QuestionsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AnswersId", "QuestionsId");
-
-                    b.HasIndex("QuestionsId");
-
-                    b.ToTable("AnswerQuestion");
-                });
 
             modelBuilder.Entity("LearningPlatform.Models.Achievement", b =>
                 {
@@ -54,21 +42,6 @@ namespace learning_platform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Achievements");
-                });
-
-            modelBuilder.Entity("LearningPlatform.Models.Answer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.Course", b =>
@@ -96,14 +69,14 @@ namespace learning_platform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("13154253-b04f-401b-960e-ce43684b2d89"),
+                            Id = new Guid("a91cb623-e47d-4626-9832-bda63975fb3d"),
                             Description = "Learn basic English communication skills.",
                             Language = "English",
                             Level = "Beginner"
                         },
                         new
                         {
-                            Id = new Guid("5b13514e-7e5b-43df-a46f-a90edd038de4"),
+                            Id = new Guid("22043873-00f9-4061-8619-d821c4cd7fe5"),
                             Description = "Enhance your Spanish fluency.",
                             Language = "Spanish",
                             Level = "Intermediate"
@@ -156,6 +129,26 @@ namespace learning_platform.Migrations
                     b.HasIndex("LessonId");
 
                     b.ToTable("LessonContent");
+                });
+
+            modelBuilder.Entity("LearningPlatform.Models.Option", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("OptionText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Options");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.Question", b =>
@@ -246,7 +239,7 @@ namespace learning_platform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AnswerId")
+                    b.Property<Guid>("OptionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("QuestionId")
@@ -257,7 +250,7 @@ namespace learning_platform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnswerId");
+                    b.HasIndex("OptionId");
 
                     b.HasIndex("QuestionId");
 
@@ -293,21 +286,6 @@ namespace learning_platform.Migrations
                     b.ToTable("UserProgresses");
                 });
 
-            modelBuilder.Entity("AnswerQuestion", b =>
-                {
-                    b.HasOne("LearningPlatform.Models.Answer", null)
-                        .WithMany()
-                        .HasForeignKey("AnswersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LearningPlatform.Models.Question", null)
-                        .WithMany()
-                        .HasForeignKey("QuestionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("LearningPlatform.Models.Lesson", b =>
                 {
                     b.HasOne("LearningPlatform.Models.Course", "Course")
@@ -328,6 +306,17 @@ namespace learning_platform.Migrations
                         .IsRequired();
 
                     b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("LearningPlatform.Models.Option", b =>
+                {
+                    b.HasOne("LearningPlatform.Models.Question", "Question")
+                        .WithMany("Options")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.Question", b =>
@@ -362,9 +351,9 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.UserAnswer", b =>
                 {
-                    b.HasOne("LearningPlatform.Models.Answer", "Answer")
+                    b.HasOne("LearningPlatform.Models.Option", "Option")
                         .WithMany()
-                        .HasForeignKey("AnswerId")
+                        .HasForeignKey("OptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -380,7 +369,7 @@ namespace learning_platform.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Answer");
+                    b.Navigation("Option");
 
                     b.Navigation("Question");
 
@@ -421,6 +410,11 @@ namespace learning_platform.Migrations
                     b.Navigation("Content");
 
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("LearningPlatform.Models.Question", b =>
+                {
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.User", b =>

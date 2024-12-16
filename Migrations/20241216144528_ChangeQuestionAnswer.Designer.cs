@@ -3,6 +3,7 @@ using System;
 using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace learning_platform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241216144528_ChangeQuestionAnswer")]
+    partial class ChangeQuestionAnswer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace learning_platform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -96,14 +99,14 @@ namespace learning_platform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("13154253-b04f-401b-960e-ce43684b2d89"),
+                            Id = new Guid("94a46b59-815f-4782-bd78-c6b0b3e10816"),
                             Description = "Learn basic English communication skills.",
                             Language = "English",
                             Level = "Beginner"
                         },
                         new
                         {
-                            Id = new Guid("5b13514e-7e5b-43df-a46f-a90edd038de4"),
+                            Id = new Guid("4ac584b5-a309-4b43-8cdd-864b2c1c0b52"),
                             Description = "Enhance your Spanish fluency.",
                             Language = "Spanish",
                             Level = "Intermediate"

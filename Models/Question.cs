@@ -11,5 +11,5 @@ public class Question
     public Lesson? Lesson { get; set; }
     public string QuestionText { get; set; } = string.Empty;
     public Guid? CorrectAnswer { get; set; }
-    public ICollection<Option> Options { get; set; } = new List<Option>();
+    public ICollection<Answer> Answers { get; set; } = new List<Answer>();
 }

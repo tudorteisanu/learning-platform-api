@@ -1,6 +1,7 @@
 namespace LearningPlatform.DTO;
 
-public class LessonContentPatchDTO {
-    
+public class LessonPatchDTO {
+    public string? Title { get; set; }
+
     public ICollection<LessonContentDTO> Content { get; set; } = new List<LessonContentDTO>();
 }

@@ -30,28 +30,32 @@ public class LessonsController : ControllerBase
 
 
     [HttpGet]
-    public ActionResult<IEnumerable<Lesson>> GetAllLessons([FromQuery] PaginationQueryParamsDTO paginationQueryParams)
+    public ActionResult<IEnumerable<Lesson>> GetAllLessons([FromQuery] PaginationQueryParamsDTO paginationQueryParams, [FromQuery] string? responseType)
     {
-        var lesson = _lessonService.GetAllLessons(paginationQueryParams);
-        
-        if (lesson == null) {
-            return NotFound("Lesson not Found");
+        var query = _context.Lessons
+                        .Include(l => l.Questions.Where(q => q.Answers.Count() > 0))
+                        .ThenInclude(q => q.Answers);
+
+        if (responseType == "short") {
+            return Ok(query.ToList().Select(item => _mapper.Map<LessonListResponseDTO>(item)));
         }
 
-        return Ok(lesson);
+        var paginated = new PaginatedList<Lesson>(query, paginationQueryParams);
+
+        return Ok(paginated);
     }
 
 
     [HttpGet("{lessonId}")]
-    public async Task<ActionResult<IEnumerable<Lesson>>> GetLessonsById(Guid lessonId)
+    public async Task<ActionResult<IEnumerable<LessonResponseDTO>>> GetLessonsById(Guid lessonId)
     {
         var lesson = await _lessonService.GetLessonsByIdAsync(lessonId);
         
         if (lesson == null) {
-            return NotFound("Lesson not Found");
+            return NotFound(new { Message = "Lesson not Found" });
         }
 
-        return Ok(lesson);
+        return Ok(_mapper.Map<LessonResponseDTO>(lesson));
     }
 
 
@@ -63,21 +67,23 @@ public class LessonsController : ControllerBase
        
         if (!result)
         {
-            return BadRequest("Failed to create lesson.");
+            return BadRequest(new { Message = "Failed to create lesson."});
         }
        
-        return Ok("Lesson created successfully.");
+        return Ok(_mapper.Map<LessonListResponseDTO>(lesson));
     }
 
     [HttpPatch("{lessonId}")]
-    public async Task<IActionResult> UpdateLesson(Guid lessonId, PatchLessonDTO lessonDto)
+    public async Task<IActionResult> UpdateLesson(Guid lessonId, LessonPatchDTO lessonDto)
     {
         var lesson = await _context.Lessons
+            .Include(l => l.Content)
+            .Include(l => l.Questions)
             .Where(l => l.Id == lessonId)
             .SingleAsync();
 
         if (lesson == null) {
-            return NotFound("Lesson not found.");
+            return NotFound(new {Message = "Lesson not Found"});
         }
         
          _mapper.Map(lessonDto, lesson);

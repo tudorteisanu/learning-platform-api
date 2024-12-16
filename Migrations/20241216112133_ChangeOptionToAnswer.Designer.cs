@@ -3,6 +3,7 @@ using System;
 using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace learning_platform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241216112133_ChangeOptionToAnswer")]
+    partial class ChangeOptionToAnswer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace learning_platform.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("AnswerQuestion", b =>
-                {
-                    b.Property<Guid>("AnswersId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("QuestionsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AnswersId", "QuestionsId");
-
-                    b.HasIndex("QuestionsId");
-
-                    b.ToTable("AnswerQuestion");
-                });
 
             modelBuilder.Entity("LearningPlatform.Models.Achievement", b =>
                 {
@@ -62,11 +50,16 @@ namespace learning_platform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Description")
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("Answers");
                 });
@@ -96,14 +89,14 @@ namespace learning_platform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("13154253-b04f-401b-960e-ce43684b2d89"),
+                            Id = new Guid("453a2f03-2474-4968-ba68-7a5800b794ae"),
                             Description = "Learn basic English communication skills.",
                             Language = "English",
                             Level = "Beginner"
                         },
                         new
                         {
-                            Id = new Guid("5b13514e-7e5b-43df-a46f-a90edd038de4"),
+                            Id = new Guid("e5dd15ac-1be9-4189-9c99-8375b508d3e2"),
                             Description = "Enhance your Spanish fluency.",
                             Language = "Spanish",
                             Level = "Intermediate"
@@ -293,19 +286,15 @@ namespace learning_platform.Migrations
                     b.ToTable("UserProgresses");
                 });
 
-            modelBuilder.Entity("AnswerQuestion", b =>
+            modelBuilder.Entity("LearningPlatform.Models.Answer", b =>
                 {
-                    b.HasOne("LearningPlatform.Models.Answer", null)
-                        .WithMany()
-                        .HasForeignKey("AnswersId")
+                    b.HasOne("LearningPlatform.Models.Question", "Question")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LearningPlatform.Models.Question", null)
-                        .WithMany()
-                        .HasForeignKey("QuestionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.Lesson", b =>
@@ -421,6 +410,11 @@ namespace learning_platform.Migrations
                     b.Navigation("Content");
 
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("LearningPlatform.Models.Question", b =>
+                {
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.User", b =>

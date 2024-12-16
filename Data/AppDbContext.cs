@@ -12,11 +12,12 @@ namespace LearningPlatform.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Question> Questions { get; set; }
-        public DbSet<Option> Options { get; set; }
+        public DbSet<Answer> Answers { get; set; }
         public DbSet<UserProgress> UserProgresses { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<LessonContent> LessonContent { get; set; }
+        public DbSet<UserAnswer> UserAnswers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,12 +39,11 @@ namespace LearningPlatform.Data
                 .HasMany(l => l.Questions)
                 .WithOne(q => q.Lesson)
                 .HasForeignKey(q => q.LessonId);
-
-            // Question - Option Relationship
+                
             modelBuilder.Entity<Question>()
-                .HasMany(q => q.Options)
-                .WithOne(o => o.Question)
-                .HasForeignKey(o => o.QuestionId);
+                .HasMany(q => q.Answers)
+                .WithMany(a => a.Questions)
+                .UsingEntity(j => j.ToTable("QuestionAnswers"));
 
             // User - UserProgress Relationship
             modelBuilder.Entity<UserProgress>()
@@ -63,10 +63,20 @@ namespace LearningPlatform.Data
                 .WithMany()
                 .HasForeignKey(ua => ua.UserId);
 
-            // modelBuilder.Entity<UserAchievement>()
-            //     .HasOne(ua => ua.Achievement)
-            //     .WithMany()
-            //     .HasForeignKey("AchievementId");
+            modelBuilder.Entity<UserAnswer>()
+                .HasOne(ua => ua.User)
+                .WithMany()
+                .HasForeignKey(ua => ua.UserId);
+
+            modelBuilder.Entity<UserAnswer>()
+                .HasOne(ua => ua.Question)
+                .WithMany()
+                .HasForeignKey(ua => ua.QuestionId);
+
+            modelBuilder.Entity<UserAnswer>()
+                .HasOne(ua => ua.Answer)
+                .WithMany()
+                .HasForeignKey(ua => ua.AnswerId);
 
             // Seed Data (optional) if you want initial data
             SeedData(modelBuilder);

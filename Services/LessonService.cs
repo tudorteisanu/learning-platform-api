@@ -23,8 +23,8 @@ public class LessonService : ILessonService
 
         public PaginatedList<Lesson> GetAllLessons(PaginationQueryParamsDTO paginationParams) {
             var query = _context.Lessons
-                            .Include(l => l.Questions.Where(q => q.Options.Count() > 0))
-                            .ThenInclude(q => q.Options);
+                            .Include(l => l.Questions.Where(q => q.Answers.Count() > 0))
+                            .ThenInclude(q => q.Answers);
 
             return new PaginatedList<Lesson>(query, paginationParams);
         }
@@ -33,8 +33,8 @@ public class LessonService : ILessonService
         {
             return await _context.Lessons
                 .Include(l => l.Content)
-                .Include(l => l.Questions.Where(q => q.Options.Count() > 0))
-                .ThenInclude(q => q.Options)
+                .Include(l => l.Questions.Where(q => q.Answers.Count() > 0))
+                .ThenInclude(q => q.Answers)
                 .Where(l => l.Id == lessonId)
                 .SingleAsync();
         }
@@ -42,7 +42,7 @@ public class LessonService : ILessonService
         public async Task<IEnumerable<Question>> GetLessonsQuestionsAsync(Guid lessonId)
         {
             return await _context.Questions
-                .Include(q => q.Options)
+                .Include(q => q.Answers)
                 .Where(q => q.LessonId == lessonId)
                 .ToListAsync();
         }

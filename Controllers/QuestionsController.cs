@@ -29,8 +29,8 @@ public class QuestionsController : ControllerBase
         _context = context;
     }
 
-    [HttpGet("{lessonId}")]
-    public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByLesson(Guid lessonId)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByLesson([FromQuery] Guid lessonId)
     {
         return Ok(await _questionsService.GetQuestionsByLessonIdAsync(lessonId));
     }
@@ -43,22 +43,53 @@ public class QuestionsController : ControllerBase
        
         if (!result)
         {
-            return BadRequest("Failed to create question.");
+            return BadRequest(new { Message = "Failed to create question." });
         }
        
-        return Ok("Question created successfully.");
+        return Ok(question);
+    }
+
+    [HttpPost("{questionId}/answer")]
+    public async Task<IActionResult> Answer(Guid questionId, QuestionAnswerDTO dto)
+    {   
+        var userId = new Guid("c93cbb80-fbff-45a5-8934-a58813ae42a7");
+        
+        var isRecordExists = await _context.UserAnswers
+            .Where(ua => ua.QuestionId == questionId)
+            .Where(ua => ua.UserId == userId)
+            .SingleOrDefaultAsync();
+
+        if (isRecordExists != null) {
+            return BadRequest(new { Message = "Question already answered!" });
+        }
+
+        var record = new UserAnswer { AnswerId = dto.AnswerId, QuestionId = questionId, UserId = userId };
+        _context.Add(record);
+        await _context.SaveChangesAsync();
+       
+        return Ok(new { Message = "Success." });
+    }
+
+    [HttpPost("{questionId}/add-answer")]
+    public async Task<IActionResult> AddAnswer(Guid questionId, AnswerDTO dto)
+    {   
+        var option = _mapper.Map<Answer>(dto);
+        _context.Add(option);
+        await _context.SaveChangesAsync();
+       
+        return Ok(option);
     }
 
     [HttpPatch("{questionId}")]
     public async Task<IActionResult> UpdateLesson(Guid questionId, QuestionPatchDTO dto)
     {
         var question = await _context.Questions
-        .Include(q => q.Options)
+        .Include(q => q.Answers)
         .Where(q=> q.Id == questionId)
         .SingleAsync();
 
         if (question == null) {
-            return NotFound("Question not found.");
+            return NotFound(new { Message = "Question not found."});
         }
 
         Console.WriteLine(question.CorrectAnswer);

@@ -11,13 +11,13 @@ namespace LearningPlatform.Controllers;
 // [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class LessonsContentController : ControllerBase
+public class LessonContentController : ControllerBase
 {
     private readonly ILessonService _lessonService;
     private readonly IMapper _mapper;
     private readonly AppDbContext _context;
 
-    public LessonsContentController(
+    public LessonContentController(
         ILessonService lessonService,
         IMapper mapper,
         AppDbContext context)
@@ -49,7 +49,7 @@ public class LessonsContentController : ControllerBase
        
         await _context.SaveChangesAsync();
        
-        return Ok("Lesson created successfully.");
+        return Ok(new {Message ="Lesson created successfully."});
     }
 
     [HttpPatch("{lessonContentId}")]
@@ -58,7 +58,7 @@ public class LessonsContentController : ControllerBase
         var lessonContent = await _context.LessonContent.FindAsync(lessonContentId);
 
         if (lessonContent == null) {
-            return NotFound("Lesson content not found.");
+            return NotFound(new {Message = "Lesson content not found."});
         }
         
          _mapper.Map(lessonContentDto, lessonContent);
@@ -73,7 +73,7 @@ public class LessonsContentController : ControllerBase
         var lessonContent = await _context.LessonContent.FindAsync(lessonContentId);
 
         if (lessonContent == null) {
-            return NotFound("Lesson not found.");
+            return NotFound(new {Message = "Lesson not found."});
         }
         
         _context.Remove(lessonContent);

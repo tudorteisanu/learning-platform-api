@@ -22,7 +22,7 @@ public class QuestionsService : IQuestionsService
         public async Task<IEnumerable<Question>> GetQuestionsByLessonIdAsync(Guid lessonId)
         {
             return await _context.Questions
-                .Include(q => q.Options)
+                .Include(q => q.Answers)
                 .Where(l => l.LessonId == lessonId)
                 .ToListAsync();
         }
@@ -32,5 +32,5 @@ public class QuestionsService : IQuestionsService
             question.Id = Guid.NewGuid();
             _context.Questions.Add(question);
             return await _context.SaveChangesAsync() > 0;
-        }
+        }        
     }

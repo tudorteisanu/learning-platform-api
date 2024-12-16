@@ -11,7 +11,7 @@ public static class DISetup
         services.AddScoped<ILessonService, LessonService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IQuestionsService, QuestionsService>();
-        services.AddScoped<IOptionsService, OptionsService>();
+        services.AddScoped<IAnswersService, AnswersService>();
         
         return services;
     }
