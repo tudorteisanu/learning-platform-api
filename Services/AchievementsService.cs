@@ -6,7 +6,7 @@ namespace LearningPlatform.Services
 {
     public interface IAchievementsService
     {
-        Task<IEnumerable<Achievement>> GetUserAchievementsAsync(Guid userId);
+        Task<IEnumerable<Achievement>> GetUserAchievementsAsync(int userId);
     }
 
     public class AchievementsService : IAchievementsService
@@ -18,7 +18,7 @@ namespace LearningPlatform.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Achievement>> GetUserAchievementsAsync(Guid userId)
+        public async Task<IEnumerable<Achievement>> GetUserAchievementsAsync(int userId)
         {
             return await _context.UserAchievements
                 .Where(ua => ua.UserId == userId)

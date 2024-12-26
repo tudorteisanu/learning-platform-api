@@ -9,9 +9,9 @@ public interface ICourseService
     PaginatedList<Course> GetAllCoursesAsync(PaginationQueryParamsDTO paginationQuery);
     Task<bool> CreateCourseAsync(Course course);
     Task UpdateCourse(Course course);
-    Task<IEnumerable<Lesson>> GetCourseLessonsAsync(Guid courseId);
-    Task<Course?> GetCourseByIdAsync(Guid courseId);
-    Task DeleteCourse(Guid courseId);
+    Task<IEnumerable<Lesson>> GetCourseLessonsAsync(int courseId);
+    Task<Course?> GetCourseByIdAsync(int courseId);
+    Task DeleteCourse(int courseId);
 }
 
 public class CourseService : ICourseService
@@ -30,7 +30,7 @@ public class CourseService : ICourseService
             return list;
         }
 
-         public async Task<Course?> GetCourseByIdAsync(Guid courseId) {
+         public async Task<Course?> GetCourseByIdAsync(int courseId) {
             return await _context.Courses
                 .Include(c => c.Lessons)
                 .Where(c => c.Id == courseId)
@@ -39,12 +39,11 @@ public class CourseService : ICourseService
 
         public async Task<bool> CreateCourseAsync(Course course)
         {
-            course.Id = Guid.NewGuid();
             _context.Courses.Add(course);
             return await _context.SaveChangesAsync() > 0;
         }
 
-         public async Task<IEnumerable<Lesson>> GetCourseLessonsAsync(Guid courseId)
+         public async Task<IEnumerable<Lesson>> GetCourseLessonsAsync(int courseId)
         {
             return await _context.Lessons
                 .Where(l => l.CourseId == courseId)
@@ -57,7 +56,7 @@ public class CourseService : ICourseService
             await _context.SaveChangesAsync();
         }
 
-        public async  Task DeleteCourse(Guid courseId) {
+        public async  Task DeleteCourse(int courseId) {
             var course = await _context.Courses.FindAsync(courseId);
 
             _context.Courses.Remove(course!);

@@ -29,7 +29,7 @@ public class AdminCoursesController : ControllerBase
     }
 
     [HttpGet("{courseId}/lessons")]
-    public async Task<ActionResult<IEnumerable<Course>>> GetCourseLessons(Guid courseId)
+    public async Task<ActionResult<IEnumerable<Course>>> GetCourseLessons(int courseId)
     {
         return Ok(await _courseService.GetCourseLessonsAsync(courseId));
     }
@@ -49,7 +49,7 @@ public class AdminCoursesController : ControllerBase
     }
 
     [HttpPatch("{courseId}")]
-    public async Task<IActionResult> UpdateCourse(Guid courseId, CoursePatchDto coursePatchDto)
+    public async Task<IActionResult> UpdateCourse(int courseId, CoursePatchDto coursePatchDto)
     {
         var course = await _courseService.GetCourseByIdAsync(courseId);
 
@@ -65,13 +65,13 @@ public class AdminCoursesController : ControllerBase
     }
 
     [HttpGet("{courseId}")]
-    public async Task<IActionResult> GetCourseByid(Guid courseId)
+    public async Task<IActionResult> GetCourseByid(int courseId)
     {
         return Ok( await _courseService.GetCourseByIdAsync(courseId));
     }
 
     [HttpDelete("{courseId}")]
-    public async Task<IActionResult> RemoveCourse(Guid courseId)
+    public async Task<IActionResult> RemoveCourse(int courseId)
     {
         await _courseService.DeleteCourse(courseId);
 

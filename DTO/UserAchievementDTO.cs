@@ -1,5 +1,5 @@
 public class UserAchievementDTO
 {
-    public Guid UserId { get; set; }
-    public Guid AchievementId { get; set; }
+    public int UserId { get; set; }
+    public int AchievementId { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,7 +18,8 @@ namespace learning_platform.Migrations
                 name: "Achievements",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false)
                 },
@@ -27,10 +29,24 @@ namespace learning_platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Answers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Description = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Answers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Language = table.Column<string>(type: "text", nullable: false),
                     Level = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false)
@@ -44,11 +60,12 @@ namespace learning_platform.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: true),
                     AvatarUrl = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -61,10 +78,10 @@ namespace learning_platform.Migrations
                 name: "Lessons",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CourseId = table.Column<int>(type: "integer", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,9 +98,10 @@ namespace learning_platform.Migrations
                 name: "UserAchievements",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AchievementId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    AchievementId = table.Column<int>(type: "integer", nullable: false),
                     UnlockedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -104,13 +122,37 @@ namespace learning_platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LessonContent",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LessonId = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: true),
+                    Position = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Data = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LessonContent", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LessonContent_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    LessonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LessonId = table.Column<int>(type: "integer", nullable: false),
                     QuestionText = table.Column<string>(type: "text", nullable: false),
-                    CorrectAnswer = table.Column<Guid>(type: "uuid", nullable: true)
+                    CorrectAnswer = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -127,9 +169,10 @@ namespace learning_platform.Migrations
                 name: "UserProgresses",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LessonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    LessonId = table.Column<int>(type: "integer", nullable: false),
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
                     CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -151,20 +194,56 @@ namespace learning_platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Options",
+                name: "AnswerQuestion",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    QuestionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OptionText = table.Column<string>(type: "text", nullable: false)
+                    AnswersId = table.Column<int>(type: "integer", nullable: false),
+                    QuestionsId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Options", x => x.Id);
+                    table.PrimaryKey("PK_AnswerQuestion", x => new { x.AnswersId, x.QuestionsId });
                     table.ForeignKey(
-                        name: "FK_Options_Questions_QuestionId",
+                        name: "FK_AnswerQuestion_Answers_AnswersId",
+                        column: x => x.AnswersId,
+                        principalTable: "Answers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AnswerQuestion_Questions_QuestionsId",
+                        column: x => x.QuestionsId,
+                        principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAnswers",
+                columns: table => new
+                {
+                    QuestionId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    AnswerId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAnswers", x => new { x.QuestionId, x.UserId, x.AnswerId });
+                    table.ForeignKey(
+                        name: "FK_UserAnswers_Answers_AnswerId",
+                        column: x => x.AnswerId,
+                        principalTable: "Answers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAnswers_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAnswers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -174,19 +253,29 @@ namespace learning_platform.Migrations
                 columns: new[] { "Id", "Description", "Language", "Level" },
                 values: new object[,]
                 {
-                    { new Guid("6e0878a7-a42d-4d7e-aaf4-7601a1a860e5"), "Enhance your Spanish fluency.", "Spanish", "Intermediate" },
-                    { new Guid("bf138c23-c13b-4b3b-9d5d-70116ffa06f1"), "Learn basic English communication skills.", "English", "Beginner" }
+                    { 1, "Learn basic English communication skills.", "English", "Beginner" },
+                    { 2, "Enhance your Spanish fluency.", "Spanish", "Intermediate" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "AvatarUrl", "CreatedAt", "Email", "PasswordHash", "Role", "Username" },
+                values: new object[] { 1, "", new DateTime(2024, 12, 22, 0, 56, 4, 440, DateTimeKind.Utc).AddTicks(330), "user@example.com", "$2a$11$1Vlw8tH0pHps2RBSvLg8R.2tpykfbLvxHuKvcCXlwy8PC3yUgdqiW", "User", "User" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnswerQuestion_QuestionsId",
+                table: "AnswerQuestion",
+                column: "QuestionsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonContent_LessonId",
+                table: "LessonContent",
+                column: "LessonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lessons_CourseId",
                 table: "Lessons",
                 column: "CourseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Options_QuestionId",
-                table: "Options",
-                column: "QuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Questions_LessonId",
@@ -204,6 +293,16 @@ namespace learning_platform.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserAnswers_AnswerId",
+                table: "UserAnswers",
+                column: "AnswerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAnswers_UserId",
+                table: "UserAnswers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserProgresses_LessonId",
                 table: "UserProgresses",
                 column: "LessonId");
@@ -212,31 +311,34 @@ namespace learning_platform.Migrations
                 name: "IX_UserProgresses_UserId",
                 table: "UserProgresses",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Options");
+                name: "AnswerQuestion");
+
+            migrationBuilder.DropTable(
+                name: "LessonContent");
 
             migrationBuilder.DropTable(
                 name: "UserAchievements");
 
             migrationBuilder.DropTable(
+                name: "UserAnswers");
+
+            migrationBuilder.DropTable(
                 name: "UserProgresses");
 
             migrationBuilder.DropTable(
-                name: "Questions");
+                name: "Achievements");
 
             migrationBuilder.DropTable(
-                name: "Achievements");
+                name: "Answers");
+
+            migrationBuilder.DropTable(
+                name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "Users");

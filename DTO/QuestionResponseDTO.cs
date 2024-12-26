@@ -3,10 +3,10 @@ using LearningPlatform.Models;
 namespace LearningPlatform.DTO;
 
 public class QuestionResponseDTO {
-    public Guid Id { get; set; }
-    public Guid LessonId { get; set; }
+    public int Id { get; set; }
+    public int LessonId { get; set; }
     public string QuestionText { get; set; } = string.Empty;
-    public Guid? CorrectAnswer { get; set; }
-    public ICollection<Answer> Answers { get; set; } = new List<Answer>();
-    public Guid? UserAnswer { get; set; }
+    public int? CorrectAnswer { get; set; }
+    public List<int> Answers { get; set; } = new List<int>();
+    public int? UserAnswer { get; set; }
 }

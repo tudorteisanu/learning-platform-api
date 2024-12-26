@@ -31,13 +31,13 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet("{courseId}/lessons")]
-    public async Task<ActionResult<IEnumerable<Course>>> GetCourseLessons(Guid courseId)
+    public async Task<ActionResult<IEnumerable<Course>>> GetCourseLessons(int courseId)
     {
         return Ok(await _courseService.GetCourseLessonsAsync(courseId));
     }
 
     [HttpGet("{courseId}")]
-    public async Task<IActionResult> GetCourseByid(Guid courseId)
+    public async Task<IActionResult> GetCourseByid(int courseId)
     {
         var course = await _courseService.GetCourseByIdAsync(courseId);
 

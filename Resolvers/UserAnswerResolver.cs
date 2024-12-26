@@ -3,7 +3,7 @@ using LearningPlatform.DTO;
 using LearningPlatform.Models;
 using LearningPlatform.Data;
 
-public class UserAnswerResolver : IValueResolver<Question, QuestionResponseDTO, Guid?>
+public class UserAnswerResolver : IValueResolver<Question, QuestionResponseDTO, int?>
 {
     private readonly AppDbContext _dbContext;
 
@@ -12,14 +12,16 @@ public class UserAnswerResolver : IValueResolver<Question, QuestionResponseDTO, 
         _dbContext = dbContext;
     }
 
-    public Guid? Resolve(Question source, QuestionResponseDTO destination, Guid? destMember, ResolutionContext context)
+    public int? Resolve(Question source, QuestionResponseDTO destination, int? destMember, ResolutionContext context)
     {
-        var userId = new Guid("c93cbb80-fbff-45a5-8934-a58813ae42a7	");
+        var userId = 1;
 
         var userAnswer = _dbContext.UserAnswers
-            .Where(ua => ua.UserId == userId && ua.QuestionId == source.Id)
+            .Where(ua => 
+            ua.UserId == userId && 
+            ua.QuestionId == destination.Id)
             .SingleOrDefault();
 
-        return userAnswer?.AnswerId ;
+        return userAnswer?.AnswerId;
     }
 }

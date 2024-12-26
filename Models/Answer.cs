@@ -1,10 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace LearningPlatform.Models;
 
 public class Answer
 {
-    public Guid Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]    
+    public int Id { get; set; }
     public string Description { get; set; } = string.Empty;
-    public ICollection<Question> Questions { set; get; } = new List<Question>();
+
+    [JsonIgnore]
+    public ICollection<Question> Questions {get; set; } = new List<Question>();
 }

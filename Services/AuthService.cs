@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using LearningPlatform.Data;
 using LearningPlatform.Models;
+using LearningPlatform.Enum;
 
 namespace LearningPlatform.Services;
 
@@ -36,13 +37,14 @@ public class AuthService : IAuthService
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Secret"]!);
+        var userRole =user.Role ?? UserRole.User.ToString();
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             
             Subject = new ClaimsIdentity(new[] {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(ClaimTypes.Role, userRole)
             }),
             Expires = DateTime.UtcNow.AddDays(7),
             Issuer = _configuration["JwtSettings:Issuer"],
@@ -56,9 +58,6 @@ public class AuthService : IAuthService
 
     public async Task<bool> RegisterAsync(User user)
     {
-        user.Id = Guid.NewGuid();
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
-        user.CreatedAt = DateTime.UtcNow;
 
         _context.Users.Add(user);
         return await _context.SaveChangesAsync() > 0;

@@ -1,17 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace LearningPlatform.Models;
 
+[PrimaryKey(nameof(QuestionId), nameof(UserId), nameof(AnswerId))]
 public class UserAnswer
 {
-    public Guid Id { get; set; }
-    public Guid QuestionId { get; set; }
+    [Key, Column(Order = 0)]
+    public int QuestionId { get; set; }
     [JsonIgnore]
+    [ForeignKey(nameof(QuestionId))]
     public Question? Question { get; set; }
-    public Guid UserId { get; set; }
+    
+    [Key, Column(Order = 1)]
+    public int UserId { get; set; }
     [JsonIgnore]
+    [ForeignKey(nameof(UserId))]
     public User? User { get; set; }
-    public Guid AnswerId { get; set; }
+    
+    [Key, Column(Order = 2)]
+    public int AnswerId { get; set; }
     [JsonIgnore]
+    [ForeignKey(nameof(AnswerId))]
     public Answer? Answer { get; set; }
 }

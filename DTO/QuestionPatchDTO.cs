@@ -1,6 +1,9 @@
+using LearningPlatform.Models;
+
 namespace LearningPlatform.DTO;
 
-public class QuestionPatchDTO {
+public class QuestionPatchTO {
     public string? QuestionText { get; set; }
-    public Guid? CorrectAnswer { get; set; }
+    public int? CorrectAnswer { get; set; }
+    public List<int> Answers { get; set; } = new List<int>();
 }

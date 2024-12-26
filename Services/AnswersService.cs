@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace LearningPlatform.Services;
 
 public interface IAnswersService {
-    Task<IEnumerable<Answer>> GetOptionsByQuestionId(Guid questionId);
+    Task<IEnumerable<Answer>> GetOptionsByQuestionId(int questionId);
     Task<Answer> CreateOption(Answer option);
-    Task<bool> DeleteQuestion(Guid questionId);
+    Task<bool> DeleteQuestion(int questionId);
 }
 
 public class AnswersService : IAnswersService {
@@ -17,7 +17,7 @@ public class AnswersService : IAnswersService {
         _context = context;
     }
 
-    public async Task<IEnumerable<Answer>> GetOptionsByQuestionId(Guid questionId) {
+    public async Task<IEnumerable<Answer>> GetOptionsByQuestionId(int questionId) {
         return await _context.Answers
             .ToListAsync();
     }    
@@ -28,7 +28,7 @@ public class AnswersService : IAnswersService {
         return record.Entity;
     }    
 
-    public async  Task<bool> DeleteQuestion(Guid questionId) {
+    public async  Task<bool> DeleteQuestion(int questionId) {
         var question = await _context.Questions.FindAsync(questionId);
 
         if (question == null) {

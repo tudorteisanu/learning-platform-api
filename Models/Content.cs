@@ -1,10 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace LearningPlatform.Models;
 
-public class LessonContent {
-    public Guid Id { get; set; }
-    public Guid LessonId { get; set; }
+public class Content {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public int LessonId { get; set; }
     [JsonIgnore]
     public Lesson? Lesson { get; set; }
     public string? Type { get; set; }

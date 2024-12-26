@@ -32,7 +32,7 @@ public class AchievementsController : ControllerBase
     {
         var userId = _userService.GetCurrentUserId();
 
-        if (userId == Guid.Empty) {
+        if (userId == 0) {
             return NotFound();
         }
         

@@ -32,9 +32,7 @@ public class LessonsController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Lesson>> GetAllLessons([FromQuery] PaginationQueryParamsDTO paginationQueryParams, [FromQuery] string? responseType)
     {
-        var query = _context.Lessons
-                        .Include(l => l.Questions.Where(q => q.Answers.Count() > 0))
-                        .ThenInclude(q => q.Answers);
+        var query = _context.Lessons;
 
         if (responseType == "short") {
             return Ok(query.ToList().Select(item => _mapper.Map<LessonListResponseDTO>(item)));
@@ -47,7 +45,7 @@ public class LessonsController : ControllerBase
 
 
     [HttpGet("{lessonId}")]
-    public async Task<ActionResult<IEnumerable<LessonResponseDTO>>> GetLessonsById(Guid lessonId)
+    public async Task<ActionResult<IEnumerable<LessonResponseDTO>>> GetLessonsById(int lessonId)
     {
         var lesson = await _lessonService.GetLessonsByIdAsync(lessonId);
         
@@ -74,7 +72,7 @@ public class LessonsController : ControllerBase
     }
 
     [HttpPatch("{lessonId}")]
-    public async Task<IActionResult> UpdateLesson(Guid lessonId, LessonPatchDTO lessonDto)
+    public async Task<IActionResult> UpdateLesson(int lessonId, LessonPatchDTO lessonDto)
     {
         var lesson = await _context.Lessons
             .Include(l => l.Content)

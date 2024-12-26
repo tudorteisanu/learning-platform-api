@@ -24,11 +24,11 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("AnswerQuestion", b =>
                 {
-                    b.Property<Guid>("AnswersId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AnswersId")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("QuestionsId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("QuestionsId")
+                        .HasColumnType("integer");
 
                     b.HasKey("AnswersId", "QuestionsId");
 
@@ -39,9 +39,11 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.Achievement", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -58,9 +60,11 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.Answer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -71,11 +75,43 @@ namespace learning_platform.Migrations
                     b.ToTable("Answers");
                 });
 
+            modelBuilder.Entity("LearningPlatform.Models.Content", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
+
+                    b.ToTable("Contents");
+                });
+
             modelBuilder.Entity("LearningPlatform.Models.Course", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -96,14 +132,14 @@ namespace learning_platform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("13154253-b04f-401b-960e-ce43684b2d89"),
+                            Id = 1,
                             Description = "Learn basic English communication skills.",
                             Language = "English",
                             Level = "Beginner"
                         },
                         new
                         {
-                            Id = new Guid("5b13514e-7e5b-43df-a46f-a90edd038de4"),
+                            Id = 2,
                             Description = "Enhance your Spanish fluency.",
                             Language = "Spanish",
                             Level = "Intermediate"
@@ -112,12 +148,14 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.Lesson", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -130,45 +168,19 @@ namespace learning_platform.Migrations
                     b.ToTable("Lessons");
                 });
 
-            modelBuilder.Entity("LearningPlatform.Models.LessonContent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Data")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("Position")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("LessonContent");
-                });
-
             modelBuilder.Entity("LearningPlatform.Models.Question", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
 
-                    b.Property<Guid?>("CorrectAnswer")
-                        .HasColumnType("uuid");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
+                    b.Property<int?>("CorrectAnswer")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("QuestionText")
                         .IsRequired()
@@ -183,9 +195,11 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("text");
@@ -210,26 +224,37 @@ namespace learning_platform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AvatarUrl = "",
+                            CreatedAt = new DateTime(2024, 12, 24, 14, 20, 31, 160, DateTimeKind.Utc).AddTicks(5360),
+                            Email = "user@example.com",
+                            PasswordHash = "$2a$11$1Vlw8tH0pHps2RBSvLg8R.2tpykfbLvxHuKvcCXlwy8PC3yUgdqiW",
+                            Role = "User",
+                            Username = "User"
+                        });
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.UserAchievement", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("AchievementId")
-                        .HasColumnType("uuid");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AchievementId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UnlockedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -242,24 +267,21 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.UserAnswer", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(0);
 
-                    b.Property<Guid>("AnswerId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(2);
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("QuestionId", "UserId", "AnswerId");
 
                     b.HasIndex("AnswerId");
-
-                    b.HasIndex("QuestionId");
 
                     b.HasIndex("UserId");
 
@@ -268,9 +290,11 @@ namespace learning_platform.Migrations
 
             modelBuilder.Entity("LearningPlatform.Models.UserProgress", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
@@ -278,11 +302,11 @@ namespace learning_platform.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("LessonId")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -308,6 +332,17 @@ namespace learning_platform.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LearningPlatform.Models.Content", b =>
+                {
+                    b.HasOne("LearningPlatform.Models.Lesson", "Lesson")
+                        .WithMany("Content")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+                });
+
             modelBuilder.Entity("LearningPlatform.Models.Lesson", b =>
                 {
                     b.HasOne("LearningPlatform.Models.Course", "Course")
@@ -317,17 +352,6 @@ namespace learning_platform.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("LearningPlatform.Models.LessonContent", b =>
-                {
-                    b.HasOne("LearningPlatform.Models.Lesson", "Lesson")
-                        .WithMany("Content")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.Question", b =>

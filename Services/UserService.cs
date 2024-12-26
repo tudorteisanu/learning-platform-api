@@ -8,8 +8,8 @@ namespace LearningPlatform.Services;
 public interface IUserService
 {
     Task<bool> RegisterUserAsync(User user);
-    Task<User?> GetUserByIdAsync(Guid userId);
-    public Guid GetCurrentUserId();
+    Task<User?> GetUserByIdAsync(int userId);
+    public int GetCurrentUserId();
 }
 
 public class UserService : IUserService
@@ -25,25 +25,20 @@ public class UserService : IUserService
 
         public async Task<bool> RegisterUserAsync(User user)
         {
-            user.Id = Guid.NewGuid();
             user.CreatedAt = DateTime.UtcNow;
 
             _context.Users.Add(user);
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<User?> GetUserByIdAsync(Guid userId)
+        public async Task<User?> GetUserByIdAsync(int userId)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
     
-        public Guid GetCurrentUserId() {
+        public int GetCurrentUserId() {
             var userId = _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId != null) {
-                 return new Guid(userId);
-            }
-           
-           return Guid.Empty;
+            return userId != null  ? int.Parse(userId) : 0;
         }
     }

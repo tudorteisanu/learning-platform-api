@@ -40,19 +40,22 @@ public class AnswersController : ControllerBase {
         return Ok(await _answersService.CreateOption(option));
     }
 
-    [HttpDelete("{questionId}")]
-    public async Task<ActionResult> CreateOption(Guid questionId) {
-        var isDeleted = await _answersService.DeleteQuestion(questionId);
+    [HttpDelete("{answerId}")]
+    public async Task<ActionResult> CreateOption(int answerId) {
+        var answer = await _context.Answers.FindAsync(answerId);
 
-        if (!isDeleted) {
-            return NotFound(new {Message = "Question not Found"});
+        if (answer == null) {
+            return NotFound(new {Message = "Answer not Found"});
         }
+
+        _context.Remove(answer);
+        await _context.SaveChangesAsync();
 
         return Ok();
     }
 
      [HttpPatch("{optionId}")]
-    public async Task<IActionResult> CreateLesson(Guid optionId, AnswerPatchDTO dto)
+    public async Task<IActionResult> CreateLesson(int optionId, AnswerPatchDTO dto)
     {
         var option = await _context.Answers.FindAsync(optionId);
 

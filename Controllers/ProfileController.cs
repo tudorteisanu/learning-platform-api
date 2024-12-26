@@ -33,7 +33,7 @@ public class ProfileController : ControllerBase
             return Unauthorized();
         }
            
-        var user = await _userService.GetUserByIdAsync(new Guid(currentUserId));
+        var user = await _userService.GetUserByIdAsync(int.Parse(currentUserId));
 
         if (user == null)
         {

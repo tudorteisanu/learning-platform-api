@@ -30,29 +30,32 @@ public class QuestionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Question>>> GetQuestionsByLesson([FromQuery] Guid lessonId)
+    public async Task<ActionResult<IEnumerable<QuestionResponseDTO>>> GetQuestionsByLesson([FromQuery] int lessonId)
     {
-        return Ok(await _questionsService.GetQuestionsByLessonIdAsync(lessonId));
+         var questions = await _context.Questions
+            .Where(l => l.LessonId == lessonId)
+            .Include(q => q.Answers)
+            .ToListAsync();
+
+        return questions.Select(_mapper.Map<QuestionResponseDTO>).ToList();
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateQuestion(QuestionDTO questionDTO)
     {
         var question = _mapper.Map<Question>(questionDTO);
-        var result = await _questionsService.CreateQuestionAsync(question);
-       
-        if (!result)
-        {
-            return BadRequest(new { Message = "Failed to create question." });
-        }
+
+        _context.Questions.Add(question);
+
+        await _context.SaveChangesAsync();
        
         return Ok(question);
     }
 
     [HttpPost("{questionId}/answer")]
-    public async Task<IActionResult> Answer(Guid questionId, QuestionAnswerDTO dto)
+    public async Task<IActionResult> Answer(int questionId, QuestionAnswerDTO dto)
     {   
-        var userId = new Guid("c93cbb80-fbff-45a5-8934-a58813ae42a7");
+        var userId = 1;
         
         var isRecordExists = await _context.UserAnswers
             .Where(ua => ua.QuestionId == questionId)
@@ -67,36 +70,44 @@ public class QuestionsController : ControllerBase
         _context.Add(record);
         await _context.SaveChangesAsync();
        
-        return Ok(new { Message = "Success." });
-    }
-
-    [HttpPost("{questionId}/add-answer")]
-    public async Task<IActionResult> AddAnswer(Guid questionId, AnswerDTO dto)
-    {   
-        var option = _mapper.Map<Answer>(dto);
-        _context.Add(option);
-        await _context.SaveChangesAsync();
-       
-        return Ok(option);
+        return Ok( new { userAnswer = record.AnswerId, Id = record.QuestionId });
     }
 
     [HttpPatch("{questionId}")]
-    public async Task<IActionResult> UpdateLesson(Guid questionId, QuestionPatchDTO dto)
+    public async Task<ActionResult<QuestionResponseDTO>> Update(int questionId, QuestionPatchTO dto)
     {
         var question = await _context.Questions
-        .Include(q => q.Answers)
-        .Where(q=> q.Id == questionId)
-        .SingleAsync();
+            .Include(q => q.Answers)
+            .Where(q=> q.Id == questionId)
+            .SingleOrDefaultAsync();
 
         if (question == null) {
             return NotFound(new { Message = "Question not found."});
         }
 
-        Console.WriteLine(question.CorrectAnswer);
-        
          _mapper.Map(dto, question);
+
         await _context.SaveChangesAsync();
-        return Ok(question);
+
+        return Ok(_mapper.Map<QuestionResponseDTO>(question));
+    }
+
+    [HttpDelete("{questionId}")]
+    public async Task<IActionResult> Delete(int questionId) {
+        var question = await _context.Questions
+            .Where(q => q.Id == questionId)
+            .SingleOrDefaultAsync();
+           
+        if (question == null) {
+            return NotFound(new { Message = "Question not found."});
+        }
+
+        var questionAnswers = _context.UserAnswers.Where(ua => ua.QuestionId == question.Id);
+
+        _context.RemoveRange(questionAnswers);
+        _context.Remove(question);
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Successfull deleted" });
     }
 }
 
